@@ -1,0 +1,22 @@
+[tool.poetry]
+name = "user_service"
+version = "0.01"
+description = "A service that manages and provides users through the REST API"
+authors = ["Sergey Chudov <chudov42@gmail.com>"]
+license = "MIT"
+
+[tool.poetry.dependencies]
+python = "^3.9"
+fastapi = "^0.78.0"
+SQLAlchemy = "^1.4.37"
+PyJWT = "^2.4.0"
+email-validator = "^1.2.1"
+uvicorn = "^0.17.6"
+asyncpg = "^0.25.0"
+
+[tool.poetry.dev-dependencies]
+alembic = "^1.8.0"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
