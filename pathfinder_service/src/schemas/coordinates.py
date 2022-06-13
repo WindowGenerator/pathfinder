@@ -1,12 +1,16 @@
+from typing import List
+
 from pydantic import BaseModel, Field
 
-
-class CoordinateID(BaseModel):
-    id: str = Field(...)
+CoordinateID = str
 
 
-class Coordinate(CoordinateID):
-    id: str = Field(...)
+class CoordinateIDs(BaseModel):
+    coordinate_ids: List[CoordinateID] = Field(...)
+
+
+class Coordinate(BaseModel):
+    id: CoordinateID = Field(...)
     name: str = Field(...)
 
     x_coord: float = Field(...)

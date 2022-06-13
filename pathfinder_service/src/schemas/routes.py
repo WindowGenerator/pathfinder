@@ -6,7 +6,7 @@ from src.schemas.coordinates import Coordinate
 
 class Route(BaseModel):
     id: str = Field(...)
-    created_by_user_with_id: int = Field(...)
+    created_by_user_with_id: int = Field(default=None)
     coordinates: List[Coordinate] = Field(...)
 
 

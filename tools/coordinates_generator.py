@@ -1,6 +1,9 @@
-import psycopg2
 import random
+
 from uuid import uuid4
+
+import psycopg2
+
 
 INT_MIN = -2147483648
 INT_MAX = 2147483647
@@ -15,7 +18,13 @@ def get_random_name() -> str:
 
 
 def generate_coordinates(limit: int) -> None:
-    conn = psycopg2.connect(database="pathfinder_db", user="postgres", password="secret", host="127.0.0.1", port="5432")
+    conn = psycopg2.connect(
+        database="pathfinder_db",
+        user="postgres",
+        password="secret",
+        host="127.0.0.1",
+        port="5432",
+    )
 
     for coord_index in range(limit):
         name = get_random_name()
@@ -26,23 +35,25 @@ def generate_coordinates(limit: int) -> None:
 
             cur = conn.cursor()
 
-            cur.execute(f"""
+            cur.execute(
+                f"""
                 SELECT COUNT(1) FROM coordinates WHERE x_coord = {x_coord} AND y_coord = {y_coord} LIMIT 1
-            """)
+            """
+            )
 
-            (result, ) = cur.fetchone()
+            (result,) = cur.fetchone()
 
             if not result:
                 break
-        
-        cur.execute(f"""
+
+        cur.execute(
+            f"""
             INSERT INTO coordinates (id, name, x_coord, y_coord)
             VALUES ('{str(uuid4())}', '{name}', {x_coord}, {y_coord});
-        """)
+        """
+        )
 
         conn.commit()
-
-
 
 
 def main() -> None:

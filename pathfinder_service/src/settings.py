@@ -86,6 +86,15 @@ class RedisSettings(BaseSettings):
         return f"{self._base_redis_uri}/{self.redis_celery_db_index}"
 
 
+class UserServiceAPISettings(BaseSettings):
+    user_service_host: str = Field(env="USER_SERVICE_HOST", default="user_service")
+    user_service_port: int = Field(env="USER_SERVICE_PORT", default=3777)
+
+    @property
+    def user_service_url(self) -> str:
+        return f"http://{self.user_service_host}:{str(self.user_service_port)}/api/v1"
+
+
 class CelerySettings(RedisSettings, RabbitMQSettings):
     worker_name: str = "pathfinder_worker"
     celery_queue_name: str = "find-route-queue"
@@ -113,3 +122,8 @@ def get_fastapi_settings() -> FastApiSettings:
 def get_postgres_settings() -> PostgresSettings:
     logger.info("Loading config settings from the environment...")
     return PostgresSettings()
+
+
+@lru_cache
+def get_user_service_settings() -> UserServiceAPISettings:
+    return UserServiceAPISettings()

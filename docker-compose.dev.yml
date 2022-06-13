@@ -19,6 +19,11 @@ x-postgres-variables: &postgres-variables
   POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-secret}
   POSTGRES_HOST: ${POSTGRES_HOST:-postgres}
 
+x-user-service-variables: &user-service-variables
+  USER_SERVICE_HOST: ${USER_SERVICE_HOST:-user_service}
+  USER_SERVICE_PORT: ${USER_SERVICE_PORT:-3777}
+
+
 services:
   pathfinder_service:
     container_name: pathfinder_service
@@ -40,7 +45,7 @@ services:
     command: "uvicorn --factory src.main:create_app --host 0.0.0.0 --port 8000 --reload"
     networks:
       - backend
-  
+
   pathfinder_worker:
     build:
       context: ./pathfinder_service
@@ -49,6 +54,7 @@ services:
       <<: *rabbitmq-variables
       <<: *redis-variables
       <<: *postgres-variables
+      <<: *user-service-variables
     depends_on:
       - rabbitmq
       - redis
@@ -59,7 +65,7 @@ services:
     command: "celery -A src.worker.worker worker -l info -Q find-route-queue --concurrency=1"
     networks:
         - backend
-    
+
   user_service:
     container_name: user_service
     build:
@@ -90,7 +96,7 @@ services:
       - postgres_data:/var/lib/postgresql/data
     networks:
         - backend
-  
+
   rabbitmq:
     container_name: rabbitmq
     image: "bitnami/rabbitmq:3.7"

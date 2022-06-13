@@ -39,7 +39,7 @@ class CoordinatesRepository:
             )
 
         return coordinates
-    
+
     async def get_length(self) -> int:
         result = await self._session.execute(
             """
@@ -53,7 +53,7 @@ class CoordinatesRepository:
                 )
                 SELECT (
                     xpath(
-                        '/row/c/text()', 
+                        '/row/c/text()',
                         query_to_xml(
                             format('select count(*) as c from %I.%I', table_schema, table_name), FALSE, TRUE, ''
                         )
@@ -67,10 +67,7 @@ class CoordinatesRepository:
 
         return length
 
-    
-    async def get_coordinate_by_id(
-        self, coord_id: str
-    ) -> CoordinateSchema:
+    async def get_coordinate_by_id(self, coord_id: str) -> CoordinateSchema:
         result = await self._session.execute(
             select(Coordinates).where(Coordinates.id == coord_id)
         )

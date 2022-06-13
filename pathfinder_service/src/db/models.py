@@ -1,11 +1,10 @@
 from uuid import uuid4
 
-from sqlalchemy import (Column, ForeignKey, Index, Integer, String, Table,
-                        UniqueConstraint, Sequence)
+from sqlalchemy import (Column, ForeignKey, Index, Integer, Sequence, String,
+                        Table, UniqueConstraint)
 from sqlalchemy.dialects.postgresql import ARRAY, UUID
 from sqlalchemy.orm import relationship
 from src.db.database import Base
-
 
 routes_coordinates_table = Table(
     "routes_coordinates",
@@ -15,7 +14,7 @@ routes_coordinates_table = Table(
 )
 
 
-COORD_NUMBER_SEQ = Sequence('coordinates_number_seq') 
+COORD_NUMBER_SEQ = Sequence("coordinates_number_seq")
 
 
 class Coordinates(Base):
@@ -27,7 +26,9 @@ class Coordinates(Base):
     x_coord = Column(Integer, nullable=False)
     y_coord = Column(Integer, nullable=False)
 
-    number = Column(Integer, COORD_NUMBER_SEQ, server_default=COORD_NUMBER_SEQ.next_value())
+    number = Column(
+        Integer, COORD_NUMBER_SEQ, server_default=COORD_NUMBER_SEQ.next_value()
+    )
 
     __table_args__ = (
         UniqueConstraint("x_coord", "y_coord", name="chk_coordinates_x_coord_y_coord"),
