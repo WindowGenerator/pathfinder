@@ -1,0 +1,132 @@
+version: "3.7"
+
+x-rabbitmq-variables: &rabbitmq-variables
+  RABBITMQ_HOST: ${RABBITMQ_HOST:-rabbitmq}
+  RABBITMQ_USERNAME: ${RABBITMQ_USERNAME:-user}
+  RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD:-bitnami}
+  RABBITMQ_PORT: ${RABBITMQ_PORT:-5672}
+
+x-redis-variables: &redis-variables
+  REDIS_HOST: ${REDIS_HOST:-redis}
+  REDIS_USERNAME: ${REDIS_USERNAME:-}
+  REDIS_PASSWORD: ${REDIS_PASSWORD:-password123}
+  REDIS_PORT: ${REDIS_PORT:-6379}
+
+  REDIS_CELERY_DB_INDEX: ${REDIS_CELERY_DB_INDEX:-0}
+
+x-postgres-variables: &postgres-variables
+  POSTGRES_USER: ${POSTGRES_USER:-postgres}
+  POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-secret}
+  POSTGRES_HOST: ${POSTGRES_HOST:-postgres}
+
+services:
+  pathfinder_service:
+    container_name: pathfinder_service
+    build:
+      context: ./pathfinder_service
+      dockerfile: ./Dockerfile.backend
+    environment:
+      <<: *rabbitmq-variables
+      <<: *redis-variables
+      <<: *postgres-variables
+    ports:
+      - "8000:8000"
+    depends_on:
+      - rabbitmq
+      - redis
+      - postgres
+    volumes:
+      - "./pathfinder_service/src:/opt/app/src"
+    command: "uvicorn --factory src.main:create_app --host 0.0.0.0 --port 8000 --reload"
+    networks:
+      - backend
+  
+  pathfinder_worker:
+    build:
+      context: ./pathfinder_service
+      dockerfile: ./Dockerfile.backend
+    environment:
+      <<: *rabbitmq-variables
+      <<: *redis-variables
+      <<: *postgres-variables
+    depends_on:
+      - rabbitmq
+      - redis
+      - postgres
+    volumes:
+      - "./logs:/opt/app/logs"
+      - "./pathfinder_service/src:/opt/app/src"
+    command: "celery -A src.worker.worker worker -l info -Q find-route-queue --concurrency=1"
+    networks:
+        - backend
+    
+  user_service:
+    container_name: user_service
+    build:
+      context: ./user_service
+      dockerfile: ./Dockerfile
+    environment:
+      <<: *postgres-variables
+    ports:
+      - "3777:3777"
+    depends_on:
+      - postgres
+    volumes:
+      - "./user_service/src:/opt/app/src"
+    command: "uvicorn --factory src.main:create_app --host 0.0.0.0 --port 3777 --reload"
+    networks:
+      - backend
+
+  postgres:
+    container_name: postgres
+    build:
+      context: ./postgres
+      dockerfile: ./Dockerfile
+    environment:
+      <<: *postgres-variables
+    ports:
+    - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+        - backend
+  
+  rabbitmq:
+    container_name: rabbitmq
+    image: "bitnami/rabbitmq:3.7"
+    ports:
+      - "4369:4369"
+      - "5672:5672"
+      - "25672:25672"
+      - "15672:15672"
+    volumes:
+      - "rabbitmq_data:/bitnami"
+    networks:
+      - backend
+
+  redis:
+    container_name: redis
+    image: "bitnami/redis:5.0.4"
+    environment:
+      - REDIS_PASSWORD=password123
+    ports:
+      - "6379:6379"
+    volumes:
+      - "redis_data:/bitnami/redis/data"
+    networks:
+        - backend
+
+volumes:
+  rabbitmq_data:
+    driver: local
+  redis_data:
+    driver: local
+  postgres_data:
+    driver: local
+
+networks:
+  backend:
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.28.0.0/16

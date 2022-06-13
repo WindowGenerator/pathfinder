@@ -6,7 +6,8 @@ authors = ["Sergey Chudov <chudov42@gmail.com>"]
 license = "MIT"
 
 packages = [
-    {include = "user_service"}
+    {include = "user_service"},
+    {include = "pathfinder_service"}
 ]
 
 readme = "README.md"
@@ -20,6 +21,7 @@ python = "^3.9"
 [tool.poetry.dev-dependencies]
 isort = "^5.10.1"
 pre-commit = "^2.19.0"
+psycopg2 = "^2.9.3"
 
 [tool.isort]
 line_length = 88
