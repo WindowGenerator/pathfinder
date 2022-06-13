@@ -34,7 +34,7 @@ async def save_route(
     users_api: UsersApi = Depends(UsersApi),
 ) -> Route:
     """
-    Return coordinates by number_from and limit
+    Save route for current user
     """
 
     current_user = await users_api.get_current_user(request)
@@ -54,8 +54,8 @@ async def save_route(
 async def get_all_routes(
     routes_repository: RoutesRepository = Depends(get_routes_repository),
 ) -> List[Route]:
-    """users_api: UsersApi = Depends(UsersApi)
-    Return coordinates by number_from and limit
+    """
+    Get all routes
     """
 
     return await routes_repository.get_routes()
@@ -72,7 +72,7 @@ async def get_report(
     routes_repository: RoutesRepository = Depends(get_routes_repository),
 ) -> List[ReportPerUser]:
     """
-    Return coordinates by number_from and limit
+    Create and get report by users and their routes
     """
 
     return await routes_repository.get_reports()
@@ -91,7 +91,7 @@ async def get_route(
     routes_repository: RoutesRepository = Depends(get_routes_repository),
 ) -> Route:
     """
-    Return coordinates by number_from and limit
+    Get route by id
     """
 
     route = await routes_repository.get_route_by_id(route_id)

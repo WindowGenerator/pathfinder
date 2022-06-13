@@ -1,10 +1,10 @@
-# User Service
+# Pathfinder Service
 
-A service that manages and provides users through the REST API
+Service engaged in the search and creation of optimal routes
 
 
 #### API docs:
-`http://127.0.0.1:3777/users/redoc`
+`http://127.0.0.1:4777/pathfinder/redoc`
 
 #### Installation deps:
 ```bash
