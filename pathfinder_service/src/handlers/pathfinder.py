@@ -15,7 +15,7 @@ async def find_path(
     celery_api: CeleryApi = Depends(get_celery_api),
 ):
     """
-    Return coordinates by number_from and limit
+    Looking for optimal path:)
     """
 
     task = celery_api.find_route(from_point_id, to_point_id)

@@ -14,7 +14,7 @@ async def current_user(
     user_repository: UserRepository = Depends(get_user_repository),
 ) -> User:
     """
-    Возвращает текущего пользователя
+    Returns the current user
     """
 
     decoded_token = decode_jwt(access_token)

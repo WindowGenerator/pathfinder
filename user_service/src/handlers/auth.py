@@ -15,7 +15,7 @@ async def login(
     user_repository: UserRepository = Depends(get_user_repository),
 ) -> UserWithTokenSchema:
     """
-    Метод позволяющий залогинить пользвателя
+    User login method
     """
 
     user_from_db: UserFromDBSchema = await user_repository.get_user_by_email(
@@ -46,4 +46,7 @@ async def login(
     "/check", dependencies=[Depends(JWTBearer())], name="auth:check-auth-token"
 )
 async def check() -> None:
+    """
+    Method for check auth of user
+    """
     return "Ok"
