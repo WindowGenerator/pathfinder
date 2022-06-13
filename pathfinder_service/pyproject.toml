@@ -1,7 +1,7 @@
 [tool.poetry]
-name = "user_service"
+name = "pathfinder_service"
 version = "0.0.1"
-description = "A service that manages and provides users through the REST API"
+description = "Service engaged in the search and creation of optimal routes"
 authors = ["Sergey Chudov <chudov42@gmail.com>"]
 license = "MIT"
 
@@ -9,10 +9,11 @@ license = "MIT"
 python = "^3.9"
 fastapi = "^0.78.0"
 SQLAlchemy = "^1.4.37"
-PyJWT = "^2.4.0"
-email-validator = "^1.2.1"
 uvicorn = "^0.17.6"
 asyncpg = "^0.25.0"
+httpx = "^0.23.0"
+celery = "^5.2.7"
+redis = "^4.3.3"
 
 [tool.poetry.dev-dependencies]
 alembic = "^1.8.0"
